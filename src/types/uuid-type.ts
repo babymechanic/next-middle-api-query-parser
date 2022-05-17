@@ -1,17 +1,16 @@
 import validator from 'validator';
 import { ParamType } from '../param-type';
+import { parseItems, QueryParamTypes, validateItems } from './default-checks';
 
-const validate = function (value: string | string[]) {
-  if (value == null) return;
-  if (typeof value !== 'string' || !validator.isUUID(value)) return 'expected uuid';
-};
+const validate = function (value: QueryParamTypes) {
+  return validateItems(value, (x) => validator.isUUID(x), 'Not valid string');
+}
 
-const parse = function (value: string | string[]): string {
-  if (validate(value) != null) throw new Error('cannot parse invalid value');
-  return value as string;
-};
+const parse = function (value: QueryParamTypes) {
+  return parseItems(value, (x) => validate(x) == null, (x) => x)
+}
 
 export const uuidType: ParamType<string> = {
   validate,
   parse
-};
+}

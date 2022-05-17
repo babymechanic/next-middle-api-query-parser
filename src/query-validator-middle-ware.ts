@@ -1,18 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { ParamConfig } from './param-config';
 import { ApiRouteMiddleware, PerRequestContext } from 'next-middle-api';
-import { ValidationResult } from './validation-result';
+import { isThereAnyError, ValidationResult } from './validation-result';
 import { PARSED_QUERY_PARAMS, QUERY_PARAM_PARSER_ERRORS, QUERY_PARAM_VALIDATION_ERROR } from './query-parser-constants';
-
 
 type QueryParams = { [p: string]: string | string[] };
 
-interface Opts {
+export interface Opts {
   params: { [i: string]: ParamConfig<unknown> };
 
   validate?(params: QueryParams, context: PerRequestContext): Promise<string | undefined>;
 }
-
 
 export const createQueryParamsMiddleWare = (opts: Opts): ApiRouteMiddleware => {
   const params = opts.params;
@@ -35,6 +33,7 @@ export const createQueryParamsMiddleWare = (opts: Opts): ApiRouteMiddleware => {
     });
     context.addItem(PARSED_QUERY_PARAMS, parsedParams);
     context.addItem(QUERY_PARAM_PARSER_ERRORS, errors);
+    if (isThereAnyError(errors)) return;
 
     const validationResult: string | undefined = await opts.validate?.(queryParams, context);
     context.addItem(QUERY_PARAM_VALIDATION_ERROR, validationResult);
