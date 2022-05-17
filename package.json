@@ -2,13 +2,19 @@
   "name": "next-middle-api-query-parser",
   "version": "0.0.1",
   "description": "middleware to parse query params",
-  "main": "index.js",
   "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
   "dependencies": {
-    "next-middle-api": "^0.0.3"
+    "next-middle-api": "^0.0.3",
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.34",
+    "@types/validator": "^13.7.2",
     "typescript": "^4.6.4"
   },
   "scripts": {
