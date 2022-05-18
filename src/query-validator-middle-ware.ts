@@ -33,9 +33,10 @@ export const createQueryParamsMiddleWare = (opts: Opts): ApiRouteMiddleware => {
     });
     context.addItem(PARSED_QUERY_PARAMS, parsedParams);
     context.addItem(QUERY_PARAM_PARSER_ERRORS, errors);
-    if (isThereAnyError(errors)) return;
-
-    const validationResult: string | undefined = await opts.validate?.(queryParams, context);
-    context.addItem(QUERY_PARAM_VALIDATION_ERROR, validationResult);
+    if (!isThereAnyError(errors)) {
+      const validationResult: string | undefined = await opts.validate?.(queryParams, context);
+      context.addItem(QUERY_PARAM_VALIDATION_ERROR, validationResult);
+    }
+    await next();
   }
 }
