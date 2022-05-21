@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { ApiRouteMiddleware, PerRequestContext } from 'next-middle-api';
 import { isThereAnyError, ValidationResult } from './validation-result';
 import { PARSED_QUERY_PARAMS, QUERY_PARAM_PARSER_ERRORS, QUERY_PARAM_VALIDATION_ERROR } from './query-parser-constants';
-import { ParamTypes, QueryParams } from './type-safe-extractor';
+import { ParamTypes, QueryParams } from './type-definitions';
 
 
 export interface Opts {

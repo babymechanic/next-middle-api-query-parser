@@ -7,7 +7,7 @@ import { ParamType } from './src/param-type';
 import { ParamConfig } from './src/param-config';
 import { floatType } from './src/types/float-type';
 import { intType } from './src/types/int-type';
-import { TypeSafeParams } from './src/type-safe-extractor';
+import { TypeSafeParams, ValidationErrors } from './src/type-definitions';
 import { createOptionalType } from './src/types/optional-type';
 
 
@@ -25,6 +25,7 @@ export {
   QUERY_PARAM_VALIDATION_ERROR,
   ParamType,
   ParamConfig,
-  TypeSafeParams
+  TypeSafeParams,
+  ValidationErrors
 };
 

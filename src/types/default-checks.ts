@@ -6,6 +6,7 @@ export const validateItems = (value: QueryParamTypes, isValid: OneItemCheck, mes
   const isArray = Array.isArray(value);
   if (value == null || value === '' || (isArray && value.length === 0)) return 'value missing';
   if (!isArray && !isValid(value)) return message;
+  if (!isArray) return;
   if ((value as string[]).some((x) => !isValid(x))) return message;
 };
 

@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { parseItems, QueryParamTypes, validateItems } from './default-checks';
 
 const validate = function (value: QueryParamTypes) {
-  return validateItems(value, (x) => DateTime.isDateTime(x), 'Not valid date value')
+  return validateItems(value, (x) => DateTime.fromISO(x).isValid, 'Not valid date value')
 }
 
 const parse = function (value: QueryParamTypes) {
