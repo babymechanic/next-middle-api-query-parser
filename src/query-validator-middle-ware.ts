@@ -1,40 +1,45 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { ParamConfig } from './param-config';
 import { ApiRouteMiddleware, PerRequestContext } from 'next-middle-api';
 import { isThereAnyError, ValidationResult } from './validation-result';
 import { PARSED_QUERY_PARAMS, QUERY_PARAM_PARSER_ERRORS, QUERY_PARAM_VALIDATION_ERROR } from './query-parser-constants';
+import { ParamTypes, QueryParams } from './type-safe-extractor';
 
-type QueryParams = { [p: string]: string | string[] };
 
 export interface Opts {
-  params: { [i: string]: ParamConfig<unknown> };
+  params: ParamTypes;
 
   validate?(params: QueryParams, context: PerRequestContext): Promise<string | undefined>;
 }
 
+function createSeed(params: ParamTypes) {
+  type OptParams = typeof params;
+  type KeyOfOptParams = keyof OptParams;
+  const errors: ValidationResult<OptParams> = {};
+  const parsedParams: Partial<Record<KeyOfOptParams, unknown>> = {};
+  return {errors, parsedParams};
+}
+
 export const createQueryParamsMiddleWare = (opts: Opts): ApiRouteMiddleware => {
   const params = opts.params;
-  type OptParams = typeof params;
   const definedParams = Object.keys(params);
-  type KeyOfOptParams = keyof OptParams;
 
   return async (req: NextApiRequest, res: NextApiResponse, context: PerRequestContext, next: () => Promise<void>): Promise<void> => {
     const queryParams = req.query;
-    const errors: ValidationResult<OptParams> = {};
-    const parsedParams: Partial<Record<KeyOfOptParams, unknown>> = {};
 
-    definedParams.forEach((expectedKey) => {
+    const {parsedParams, errors} = definedParams.reduce((acc, expectedKey) => {
       const paramConfig = params[expectedKey];
       const rawQueryValue = queryParams[expectedKey];
-      if (paramConfig.isOptional && rawQueryValue == null) return;
-      errors[expectedKey] = paramConfig.type.validate(rawQueryValue);
-      if (errors[expectedKey] != null) return;
-      parsedParams[expectedKey] = paramConfig.type.parse(rawQueryValue);
-    });
+      acc.errors[expectedKey] = paramConfig.validate(rawQueryValue);
+      if (acc.errors[expectedKey] != null) return acc;
+      acc.parsedParams[expectedKey] = paramConfig.parse(rawQueryValue);
+      return acc;
+    }, createSeed(params));
+
     context.addItem(PARSED_QUERY_PARAMS, parsedParams);
     context.addItem(QUERY_PARAM_PARSER_ERRORS, errors);
-    if (!isThereAnyError(errors)) {
-      const validationResult: string | undefined = await opts.validate?.(queryParams, context);
+
+    if (!isThereAnyError(errors) && opts.validate != null) {
+      const validationResult: string | undefined = await opts.validate(queryParams, context);
       context.addItem(QUERY_PARAM_VALIDATION_ERROR, validationResult);
     }
     await next();

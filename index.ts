@@ -7,6 +7,8 @@ import { ParamType } from './src/param-type';
 import { ParamConfig } from './src/param-config';
 import { floatType } from './src/types/float-type';
 import { intType } from './src/types/int-type';
+import { TypeSafeParams } from './src/type-safe-extractor';
+import { createOptionalType } from './src/types/optional-type';
 
 
 export {
@@ -15,11 +17,14 @@ export {
   uuidType,
   floatType,
   intType,
+  createOptionalType,
   createQueryParamsMiddleWare,
   Opts,
   PARSED_QUERY_PARAMS,
   QUERY_PARAM_PARSER_ERRORS,
   QUERY_PARAM_VALIDATION_ERROR,
   ParamType,
-  ParamConfig
+  ParamConfig,
+  TypeSafeParams
 };
+
