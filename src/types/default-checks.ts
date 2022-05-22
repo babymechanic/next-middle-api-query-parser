@@ -1,20 +1,21 @@
+import { InvalidValueError } from '../type-definitions';
+import { ParamValues } from '../param-type';
+
 export type OneItemCheck = (val: string) => boolean;
 
-export type QueryParamTypes = string | string[];
-
-export const validateItems = (value: QueryParamTypes, isValid: OneItemCheck, message: string): string | undefined => {
-  const isArray = Array.isArray(value);
-  if (value == null || value === '' || (isArray && value.length === 0)) return 'value missing';
-  if (!isArray && !isValid(value)) return message;
-  if (!isArray) return;
-  if ((value as string[]).some((x) => !isValid(x))) return message;
+export const validateItem = (value: ParamValues, isValid: OneItemCheck, message: string): string | undefined => {
+  if (Array.isArray(value)) return 'expected single value';
+  if (value == null || value === '') return 'value missing';
+  if (!isValid(value)) return message;
 };
 
-export type IsValid = (val: QueryParamTypes) => boolean;
+export type IsValid = (val: ParamValues) => boolean;
 
-export const parseItems = <T>(value: QueryParamTypes, isValid: IsValid, parseItem: (val: string) => T): T | T[] | null => {
-  if (!isValid(value)) throw new Error('cannot parse invalid value');
-  const isArray = Array.isArray(value);
-  if (!isArray) return parseItem(value as string);
-  return (value as string[]).map((x) => parseItem(x));
+export const parseItem = <T>(value: ParamValues, isValid: IsValid, parseItem: (val: string) => T): T | null => {
+  if (!isValid(value)) throw new InvalidValueError('cannot parse invalid value');
+  return parseItem(value as string);
 };
+
+
+
+

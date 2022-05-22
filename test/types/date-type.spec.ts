@@ -1,21 +1,30 @@
 import { expect } from 'chai';
 import { dateType } from '../../src/types/date-type';
+import { InvalidValueError } from '../../src/type-definitions';
 
 
 describe('#dateType', () => {
 
   describe('#validate', function () {
 
-    ['not a date', ['not a date'], '12123', ['12123']].forEach((testValue) => {
-      it(`should return an error if the value is "${testValue}"`, function () {
+    ['not a date', '12123' ].forEach((testValue) => {
+      it(`returns an error for invalid values like "${JSON.stringify(testValue)}"`, function () {
         const validationResult = dateType.validate(testValue);
 
         expect(validationResult).to.equal('Not valid date value');
       });
     });
 
-    ['', [] as string[], undefined].forEach((testValue) => {
-      it(`should return an error if the value is "${testValue}"`, function () {
+    [['not a date'], ['12123'], [] as string[]].forEach((testValue) => {
+      it(`returns an error for array values "${JSON.stringify(testValue)}"`, function () {
+        const validationResult = dateType.validate(testValue);
+
+        expect(validationResult).to.equal('expected single value');
+      });
+    });
+
+    ['',  undefined].forEach((testValue) => {
+      it(`returns error for missing values like"${JSON.stringify(testValue)}"`, function () {
         const validationResult = dateType.validate(testValue);
 
         expect(validationResult).to.equal('value missing');
@@ -31,5 +40,24 @@ describe('#dateType', () => {
 
   });
 
+  describe('#parse', () => {
 
+    ['not a date', ['not a date'], '12123', ['12123'], '', [] as string[], undefined].forEach((testValue) => {
+      it('should throw an error if the value is not a valid value', function () {
+
+        expect(() => dateType.parse(testValue)).to.throw(InvalidValueError, 'cannot parse invalid value');
+
+      });
+    });
+
+
+    it('should return the parsed value if the raw value is valid', function () {
+      const expectedDate = new Date();
+
+      const actualDate = dateType.parse(expectedDate.toISOString()) as Date;
+
+      expect(actualDate.getTime()).to.equal(expectedDate.getTime());
+    });
+
+  });
 });

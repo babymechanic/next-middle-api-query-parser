@@ -1,5 +1,7 @@
-export interface ParamType<T> {
-  validate(value: undefined | string | string[]): string | undefined;
+export type ParamValues = undefined | string | string[];
 
-  parse(value: string | string[]): T | T[] | null;
+export interface ParamType<T> {
+  validate(value: ParamValues): string | undefined;
+
+  parse(value: ParamValues): T | null;
 }

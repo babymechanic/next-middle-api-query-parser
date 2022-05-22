@@ -9,6 +9,7 @@ import { floatType } from './src/types/float-type';
 import { intType } from './src/types/int-type';
 import { TypeSafeParams, ValidationErrors } from './src/type-definitions';
 import { createOptionalType } from './src/types/optional-type';
+import { createArrayType } from './src/types/array-type';
 
 
 export {
@@ -19,6 +20,7 @@ export {
   intType,
   createOptionalType,
   createQueryParamsMiddleWare,
+  createArrayType,
   Opts,
   PARSED_QUERY_PARAMS,
   QUERY_PARAM_PARSER_ERRORS,

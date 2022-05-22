@@ -9,4 +9,8 @@ export type ValidationErrors<T, TKey extends keyof T> = Partial<Record<TKey, str
 
 export type QueryParams = { [p: string]: string | string[] };
 
+export class InvalidValueError extends Error {
+
+}
+
 

@@ -1,15 +1,20 @@
-import { ParamType } from '../param-type';
+import { ParamType, ParamValues } from '../param-type';
+
+function isEmpty(value: ParamValues): boolean {
+  const isArray = Array.isArray(value);
+  if (isArray && value?.length === 0) return true;
+  return value == null || value === '';
+}
 
 export function createOptionalType<T>(innerType: ParamType<T>): ParamType<T> {
   const {validate, parse} = innerType;
   return {
-    validate(value: string | string[]): string | undefined {
-      if (value == null) return;
+    validate(value: ParamValues): string | undefined {
+      if (isEmpty(value)) return;
       return validate(value);
     },
-    parse(value: string | string[]): T | T[] | null {
-      const isArray = Array.isArray(value);
-      if (value == null || value === '' || (isArray && value.length === 0)) return null;
+    parse(value: ParamValues): T | null {
+      if (isEmpty(value)) return null;
       return parse(value);
     }
   }
