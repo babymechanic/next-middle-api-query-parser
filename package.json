@@ -26,6 +26,6 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "env NODE_ENV='test' TS_NODE_PROJECT='tsconfig.testing.json'  mocha --require ts-node/register ./test/**/*.spec.ts"
+    "test": "mocha --require ts-node/register --recursive test/**/*.spec.ts "
   }
 }
