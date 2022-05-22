@@ -35,7 +35,7 @@ describe('#stringType', () => {
   describe('#parse', () => {
 
     [['an array'], '', [] as string[], undefined].forEach((testValue) => {
-      it('should throw an error if the value is not a valid value', function () {
+      it(`throws error if value is not valid like ${JSON.stringify(testValue)}`, function () {
 
         expect(() => stringType.parse(testValue)).to.throw(InvalidValueError, 'cannot parse invalid value');
 

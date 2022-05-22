@@ -7,7 +7,7 @@ const validate = function (value: ParamValues) {
 }
 
 const parse = function (value: ParamValues) {
-  return parseItem(value, (x) => validate(x) == null, (x) => parseInt(x))
+  return parseItem(value, (x) => validate(x) == null, (x) => parseFloat(x))
 }
 
 export const floatType: ParamType<Number> = {

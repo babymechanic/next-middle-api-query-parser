@@ -43,7 +43,7 @@ describe('#dateType', () => {
   describe('#parse', () => {
 
     ['not a date', ['not a date'], '12123', ['12123'], '', [] as string[], undefined].forEach((testValue) => {
-      it('should throw an error if the value is not a valid value', function () {
+      it(`throws error if value is not valid like ${JSON.stringify(testValue)}`, function () {
 
         expect(() => dateType.parse(testValue)).to.throw(InvalidValueError, 'cannot parse invalid value');
 
