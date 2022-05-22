@@ -19,8 +19,11 @@ export function createArrayType<T>(innerType: ParamType<T>): ParamType<T[]> {
     validate(value: ParamValues): string | undefined {
       if (isNull(value)) return 'value missing';
       if (isEmpty(value)) return 'value missing';
-      const arrayOfValues = ([] as string[]).concat(value);
-      return validate(arrayOfValues);
+      const itemsToValidate = ([] as string[]).concat(value);
+      for (let index = 0; index < itemsToValidate.length; index++) {
+        const error = validate(itemsToValidate[index]);
+        if (error != null) return error;
+      }
     },
     parse(value: ParamValues): T[] | null {
       if (isNull(value)) throw new InvalidValueError('cannot parse invalid value');
