@@ -1,6 +1,6 @@
 {
   "name": "next-middle-api-query-parser",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "middleware to parse query params",
   "license": "MIT",
   "main": "dist/index.js",

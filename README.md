@@ -30,18 +30,21 @@ import {
 } from '../../../next-middle-api-query-parser';
 import { createArrayType, ValidationErrors } from 'next-middle-api-query-parser';
 
-
+// define your query params
 const params = {
   limit: intType,
   query: stringType,
+  // use factories to chain types to handle arrays and/or optional type
   startFrom: createOptionalType(dateType),
   ids: createArrayType(intType)
 };
 
+// generate type safe definitions from your param definition
 type ParamsType = typeof params;
 type MyQueryParams = TypeSafeParams<ParamsType>;
 type ParsingErrors = ValidationErrors<ParamsType>;
 
+// define complex validation to apply if all basic validations pass
 const expensiveValidation = async (params: MyQueryParams, context: PerRequestContext): Promise<string | undefined> => {
   return 'some expensive validation';
 };
@@ -54,6 +57,7 @@ const queryParamsMiddleWare = createQueryParamsMiddleWare({
 export default createHandlers({
   get: {
     handler: (req, res, context) => {
+      // get all the parsed results and decide how to respond
       const myParams = context.getItem(PARSED_QUERY_PARAMS) as MyQueryParams;
       const errors = context.getItem(QUERY_PARAM_PARSER_ERRORS) as ParsingErrors;
       const complexError = context.getItem(QUERY_PARAM_VALIDATION_ERROR) as string | undefined;
