@@ -18,8 +18,8 @@ describe('#createQueryParamsMiddleWare', () => {
     from: createOptionalType(dateType)
   };
   type ParamDefinition = typeof params;
-  type Params = TypeSafeParams<ParamDefinition, keyof ParamDefinition>;
-  type ParsingErrors = ValidationErrors<ParamDefinition, keyof ParamDefinition>;
+  type Params = TypeSafeParams<ParamDefinition>;
+  type ParsingErrors = ValidationErrors<ParamDefinition>;
 
 
   it('should be able to parse different types', async function () {
