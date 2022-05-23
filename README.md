@@ -15,65 +15,51 @@ It allows you to do the following
 ## define a route with in built data types
 
 ```typescript
-//  host/api/hello?limit=20&query=test&dateFrom=2022-05-21T05%3A56%3A30.053Z
-import { createHandlers } from 'next-middle-api';
-import { createOptionalType, createQueryParamsMiddleWare, dateType, intType, stringType, TypeSafeParams, PARSED_QUERY_PARAMS } from 'next-middle-api-query-parser';
+//  host/api/hello?limit=20&query=test&startFrom=2022-05-21T05:54:34.523Z&ids=2&ids=3
+import { createHandlers, PerRequestContext } from 'next-middle-api';
+import {
+  createOptionalType,
+  createQueryParamsMiddleWare,
+  dateType,
+  intType,
+  stringType,
+  TypeSafeParams,
+  PARSED_QUERY_PARAMS,
+  QUERY_PARAM_PARSER_ERRORS,
+  QUERY_PARAM_VALIDATION_ERROR
+} from '../../../next-middle-api-query-parser';
+import { createArrayType, ValidationErrors } from 'next-middle-api-query-parser';
 
-//  in built types
+
 const params = {
   limit: intType,
   query: stringType,
-  // use the optional factory to define an optional type
-  startFrom: createOptionalType(dateType)
+  startFrom: createOptionalType(dateType),
+  ids: createArrayType(intType)
 };
 
 type ParamsType = typeof params;
-// Get typed query params from your definition
-type MyQueryParams = TypeSafeParams<ParamsType, keyof ParamsType>;
+type MyQueryParams = TypeSafeParams<ParamsType>;
+type ParsingErrors = ValidationErrors<ParamsType>;
 
-const queryParamsMiddleWare = createQueryParamsMiddleWare({
-  params: params
-});
-
-export default createHandlers({
-  get: {
-    handler: (req, res, context) => {
-      // fetch the params as a typed value
-      const myParams = context.getItem(PARSED_QUERY_PARAMS) as MyQueryParams;
-      const {limit, startFrom, query} = myParams;
-      res.status(200).json({limit, startFrom, query});
-    },
-    preHooks: [queryParamsMiddleWare]
-  },
-})
-```
-
-## handle validation errors
-
-```typescript
-//  host/api/hello
-import { createHandlers } from 'next-middle-api';
-import { createOptionalType, createQueryParamsMiddleWare, dateType, intType, stringType, TypeSafeParams, PARSED_QUERY_PARAMS } from 'next-middle-api-query-parser';
-
-const params = {
-  limit: intType,
+const expensiveValidation = async (params: MyQueryParams, context: PerRequestContext): Promise<string | undefined> => {
+  return 'some expensive validation';
 };
 
-type ParamsType = typeof params;
-type MyQueryParams = TypeSafeParams<ParamsType, keyof ParamsType>;
-
 const queryParamsMiddleWare = createQueryParamsMiddleWare({
-  params: params
+  params,
+  validate: expensiveValidation
 });
 
 export default createHandlers({
   get: {
     handler: (req, res, context) => {
       const myParams = context.getItem(PARSED_QUERY_PARAMS) as MyQueryParams;
-      const {limit, startFrom, query} = myParams;
-      res.status(200).json({limit, startFrom, query});
+      const errors = context.getItem(QUERY_PARAM_PARSER_ERRORS) as ParsingErrors;
+      const complexError = context.getItem(QUERY_PARAM_VALIDATION_ERROR) as string | undefined;
+      res.status(200).json({myParams, errors, complexError});
     },
     preHooks: [queryParamsMiddleWare]
-  },
-})
+  }
+});
 ```
