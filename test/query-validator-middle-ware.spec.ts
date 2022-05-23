@@ -6,13 +6,16 @@ import { PerRequestContext } from 'next-middle-api';
 import { PARSED_QUERY_PARAMS, QUERY_PARAM_PARSER_ERRORS, QUERY_PARAM_VALIDATION_ERROR } from '../src/query-parser-constants';
 import { TypeSafeParams, ValidationErrors } from '../src/type-definitions';
 import { expect } from 'chai';
+import { createOptionalType } from '../src/types/optional-type';
+import { dateType } from '../src/types/date-type';
 
 describe('#createQueryParamsMiddleWare', () => {
 
   const params = {
     limit: intType,
     ids: createArrayType(intType),
-    query: stringType
+    query: stringType,
+    from: createOptionalType(dateType)
   };
   type ParamDefinition = typeof params;
   type Params = TypeSafeParams<ParamDefinition, keyof ParamDefinition>;
@@ -20,7 +23,8 @@ describe('#createQueryParamsMiddleWare', () => {
 
 
   it('should be able to parse different types', async function () {
-    const query = {limit: '12345', ids: ['123', '124'], query: 'apple'};
+    const date = new Date();
+    const query = {limit: '12345', ids: ['123', '124'], query: 'apple', from: date.toISOString()};
     let nextCalled = false;
     const nextMock = async () => {
       nextCalled = true;
@@ -34,6 +38,7 @@ describe('#createQueryParamsMiddleWare', () => {
     expect(parsed.ids).to.eql([123, 124]);
     expect(parsed.limit).to.eql(12345);
     expect(parsed.query).to.eql('apple');
+    expect(parsed.from!.getTime()).to.eql(date.getTime());
     expect(nextCalled).to.be.true;
   });
 
