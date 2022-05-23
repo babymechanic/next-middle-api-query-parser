@@ -67,6 +67,12 @@ export default createHandlers({
   }
 });
 ```
+
+## define a custom type
+To define a custom type implement this `ParamType<T>`.
+This is enough to plug it in with and use within the definitions.
+
+
 # License
 
 MIT License
