@@ -19,6 +19,17 @@ function createSeed(params: ParamTypes) {
   return {errors, parsedParams};
 }
 
+function extractParamsAndErrors(definedParams: string[], params: ParamTypes, queryParams: QueryParams) {
+  return definedParams.reduce((acc, expectedKey) => {
+    const paramConfig = params[expectedKey];
+    const rawQueryValue = queryParams[expectedKey];
+    acc.errors[expectedKey] = paramConfig.validate(rawQueryValue);
+    if (acc.errors[expectedKey] != null) return acc;
+    acc.parsedParams[expectedKey] = paramConfig.parse(rawQueryValue);
+    return acc;
+  }, createSeed(params));
+}
+
 export const createQueryParamsMiddleWare = (opts: Opts): ApiRouteMiddleware => {
   const params = opts.params;
   const definedParams = Object.keys(params);
@@ -26,14 +37,7 @@ export const createQueryParamsMiddleWare = (opts: Opts): ApiRouteMiddleware => {
   return async (req: NextApiRequest, res: NextApiResponse, context: PerRequestContext, next: () => Promise<void>): Promise<void> => {
     const queryParams = req.query;
 
-    const {parsedParams, errors} = definedParams.reduce((acc, expectedKey) => {
-      const paramConfig = params[expectedKey];
-      const rawQueryValue = queryParams[expectedKey];
-      acc.errors[expectedKey] = paramConfig.validate(rawQueryValue);
-      if (acc.errors[expectedKey] != null) return acc;
-      acc.parsedParams[expectedKey] = paramConfig.parse(rawQueryValue);
-      return acc;
-    }, createSeed(params));
+    const {parsedParams, errors} = extractParamsAndErrors(definedParams, params, queryParams);
 
     context.addItem(PARSED_QUERY_PARAMS, parsedParams);
     context.addItem(QUERY_PARAM_PARSER_ERRORS, errors);
