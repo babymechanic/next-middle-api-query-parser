@@ -1,3 +1,5 @@
+![tests](https://github.com/babymechanic/next-middle-api-query-parser/actions/workflows/run-tests.yml/badge.svg)
+
 # next-middle-api-query-parser
 
 This is a middleware for [next-middle-api](https://www.npmjs.com/package/next-middle-api).
