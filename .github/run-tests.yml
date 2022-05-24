@@ -3,6 +3,9 @@ on:
   push:
     paths:
       - 'src/**'
+      - 'index.ts'
+      - 'package.json'
+      - 'yarn.lock'
       - '.github/workflows/run-tests.yml'
     branches:
       - master
