@@ -1,10 +1,15 @@
 {
   "name": "next-middle-api-query-parser",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "middleware to parse query params",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "homepage": "https://github.com/babymechanic/next-middle-api-query-parser#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/babymechanic/next-middle-api-query-parser.git"
+  },
   "keywords": [
     "next",
     "nextjs",
@@ -18,7 +23,7 @@
   ],
   "dependencies": {
     "luxon": "^2.4.0",
-    "next-middle-api": "^0.0.3",
+    "next-middle-api": "^0.0.5",
     "validator": "^13.7.0"
   },
   "devDependencies": {
